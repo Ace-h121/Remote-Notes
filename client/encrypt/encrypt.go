@@ -54,4 +54,6 @@ func createFile(contents string) {
 
 }
 
-
+func PrepareFile(fileName string){
+	createFile(encryptFile(openFile(fileName)))
+}
