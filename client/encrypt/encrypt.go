@@ -2,9 +2,13 @@ package encrypt
 
 import (
 	"os"
+	"io"
 	"fmt"
 	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"compress/gzip"
+	"encoding/base64"
 )
 
 func openFile(file string) string {
@@ -13,22 +17,34 @@ func openFile(file string) string {
 		fmt.Printf("Got Error Opening file: %s", err.Error())
 		panic(err)
 	}
-	contents, err := os.ReadFile(pwd + file)
+	contents, err := os.ReadFile(pwd + "/" + file)
 	if err != nil{
-		fmt.Printf("Got Error Opening file: %e", err.Error())
+		fmt.Printf("Got Error Opening file: %s", err.Error())
 		panic(err)
 	}
 	return string(contents)
 }
 
 func encryptFile(contents string) string {
-	block, err := aes.NewCipher([]byte("Team5401!!"))
-	if err != nil{
-		fmt.Printf("Got Error Encrypting contents: %s", err.Error())
+		block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
+	if err != nil {
+		panic(err)
 	}
-	out := make([]byte, len(contents))
-	block.Encrypt(out, []byte(contents))
-	return string(out) 
+
+	plainText := []byte(contents)
+
+	// The IV needs to be unique, but not secure. Therefore it's common to
+	// include it at the beginning of the ciphertext.
+	ciphertext := make([]byte, aes.BlockSize+len(plainText))
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		panic(err)
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], plainText)
+
+	return base64.RawStdEncoding.EncodeToString(ciphertext)
 }
 
 func createFile(contents string) {
@@ -37,19 +53,20 @@ func createFile(contents string) {
 		fmt.Printf("Got Error Opening file: %s", err.Error())
 		panic(err)
 	}
-	file, err := os.Create(pwd + "temp.gz")
+	file, err := os.Create(pwd + "/" + "temp.gz")
 	if err != nil{
 		fmt.Printf("Got Error Creating file %s", err.Error())
 		panic(err)
 	}
 	gz := gzip.NewWriter(file)
-	_, err := gz.Write([]byte(contents))
+	_, err = gz.Write([]byte(contents))
 	
 	if err != nil{
 		fmt.Printf("Got Error Writing to File %s", err.Error())
 		panic(err)
 	}
 
+	gz.Close()
 	file.Close()
 
 }
