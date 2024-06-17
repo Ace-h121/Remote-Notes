@@ -1,7 +1,14 @@
 package transfer
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
-func cleanFile(filename string){
-	
+func CleanFile(filename string){
+	err := os.Remove(filename)
+	if err != nil{
+		log.Fatal(err)
+	}
 }
+

@@ -6,6 +6,7 @@ import (
 
 	"Github.com/Ace-h121/decrypt"
 	"Github.com/Ace-h121/encrypt"
+	"Github.com/Ace-h121/transfer"
 )
 
 
@@ -45,6 +46,7 @@ func sendMethod(args []string){
 func receiveMethod(args []string){
 	for _, arg := range args{
 		decrypt.DownloadFile(arg)
+		transfer.CleanFile(arg)
 	}
 
 }
