@@ -5,7 +5,9 @@ import (
 	"crypto/cipher"
 	"encoding/base64"
 	"log"
+	"os"
 	"os/exec"
+	"strings"
 )
 
 func unzip(filename string) []byte {
@@ -43,8 +45,18 @@ func decryptFile(content []byte) []byte {
 	return ciphertext
 }
 
+func createFile(filename string, content []byte){
+	file, err := os.Create(strings.Trim(filename, ".gz"))
+	defer file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Write(content)
+	
+}
 
 
-func DownloadFile(filename string) []byte{
-	return decryptFile(unzip(filename))
+
+func DownloadFile(filename string){
+	createFile(filename, decryptFile(unzip(filename)))
 }

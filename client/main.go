@@ -44,7 +44,7 @@ func sendMethod(args []string){
 
 func receiveMethod(args []string){
 	for _, arg := range args{
-		fmt.Println(string(decrypt.DownloadFile(arg)))
+		decrypt.DownloadFile(arg)
 	}
 
 }
