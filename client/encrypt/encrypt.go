@@ -12,12 +12,7 @@ import (
 )
 
 func openFile(file string) string {
-	pwd, err := os.Getwd()
-	if err != nil{
-		fmt.Printf("Got Error Opening file: %s", err.Error())
-		panic(err)
-	}
-	contents, err := os.ReadFile(pwd + "/" + file)
+	contents, err := os.ReadFile(file)
 	if err != nil{
 		fmt.Printf("Got Error Opening file: %s", err.Error())
 		panic(err)
@@ -26,7 +21,7 @@ func openFile(file string) string {
 }
 
 func encryptFile(contents string) string {
-		block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
+	block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
 	if err != nil {
 		panic(err)
 	}
@@ -47,13 +42,8 @@ func encryptFile(contents string) string {
 	return base64.RawStdEncoding.EncodeToString(ciphertext)
 }
 
-func createFile(contents string) {
-	pwd, err := os.Getwd()
-	if err != nil{
-		fmt.Printf("Got Error Opening file: %s", err.Error())
-		panic(err)
-	}
-	file, err := os.Create(pwd + "/" + "temp.gz")
+func createFile(contents string, filename string) {
+	file, err := os.Create(filename + ".gz")
 	if err != nil{
 		fmt.Printf("Got Error Creating file %s", err.Error())
 		panic(err)
@@ -72,5 +62,5 @@ func createFile(contents string) {
 }
 
 func PrepareFile(fileName string){
-	createFile(encryptFile(openFile(fileName)))
+	createFile(encryptFile(openFile(fileName)), fileName)
 }
