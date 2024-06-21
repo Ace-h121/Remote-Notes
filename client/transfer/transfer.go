@@ -77,16 +77,21 @@ func RecieveFile(path string, url string) (File, error){
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	
+	 
 	if err != nil{
 		return File{}, err
 	}
 
 	body, err := io.ReadAll(resp.Body)
 
+
 	var newFile File
 
 	err = json.Unmarshal(body, &newFile)
+
+	if err != nil {
+		log.Fatal("Requested file does not exist")
+	}
 
 	return newFile, nil 
 }
@@ -99,4 +104,24 @@ func CreateFile(filename string, content []byte) error {
 	}
 	file.Write(content)
 	return nil
+}
+
+func ListFiles(path string, url string ) ([]byte, error) {
+	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte(path)))
+	if err != nil{
+		return nil, err
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil{
+		return nil, err
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
