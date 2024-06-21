@@ -19,7 +19,7 @@ func CleanFile(filename string){
 
 type File struct {
 	Content []byte `json:"content"`
-	Name string
+	Name string `json:"name"`
 }
 
 type Path struct {
@@ -89,4 +89,14 @@ func RecieveFile(path string, url string) (File, error){
 	err = json.Unmarshal(body, &newFile)
 
 	return newFile, nil 
+}
+
+func CreateFile(filename string, content []byte) error {
+	file, err := os.Create(filename)
+	defer file.Close()
+	if err != nil {
+		return err
+	}
+	file.Write(content)
+	return nil
 }

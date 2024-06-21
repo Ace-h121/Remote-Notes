@@ -31,7 +31,8 @@ func main(){
 		receiveMethod(args)
 
 	default:
-		fmt.Println("Couldnt understand message")
+		fmt.Println("Couldnt understand method, exiting program")
+		os.Exit(1)
 	}
 
 }
@@ -42,14 +43,16 @@ func sendMethod(args []string){
 		content, err := encrypt.PrepareFile(arg)
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
+			os.Exit(1)
 		}
 
 		file := transfer.MakeFileStruct(content, arg)
-		err = transfer.SendFile(file, "")
+		err = transfer.SendFile(file, "localhost")
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
+			os.Exit(1)
 		}
 
 	}
@@ -58,8 +61,21 @@ func sendMethod(args []string){
 
 func receiveMethod(args []string){
 	for _, arg := range args{
-		decrypt.DownloadFile(arg)
-		transfer.CleanFile(arg)
+		file, err := transfer.RecieveFile(arg, "localhost")
+
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		file.Content, err = decrypt.DecryptFile(file.Content)
+
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		transfer.CreateFile(file.Name, file.Content)
 	}
 
 }

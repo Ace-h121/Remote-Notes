@@ -3,7 +3,6 @@ package encrypt
 import (
 	"os"
 	"io"
-	"fmt"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
