@@ -44,15 +44,13 @@ func sendMethod(args []string){
 
 		if err != nil {
 			panic(err)
-			os.Exit(1)
 		}
 
 		file := transfer.MakeFileStruct(content, arg)
-		err = transfer.SendFile(file, "localhost")
+		err = transfer.SendFile(file, "http://localhost:8090/send")
 
 		if err != nil {
 			panic(err)
-			os.Exit(1)
 		}
 
 	}
