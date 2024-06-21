@@ -11,19 +11,18 @@ import (
 	"encoding/base64"
 )
 
-func openFile(file string) string {
+func openFile(file string) (string, error) {
 	contents, err := os.ReadFile(file)
 	if err != nil{
-		fmt.Printf("Got Error Opening file: %s", err.Error())
-		panic(err)
+		return "handle your errors pls pls pls", nil
 	}
-	return string(contents)
+	return string(contents), nil
 }
 
-func encryptFile(contents string) string {
+func encryptFile(contents string) (string, error) {
 	block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	plainText := []byte(contents)
@@ -33,34 +32,47 @@ func encryptFile(contents string) string {
 	ciphertext := make([]byte, aes.BlockSize+len(plainText))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		panic(err)
+		return "", err
 	}
 
 	stream := cipher.NewCFBEncrypter(block, iv)
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], plainText)
 
-	return base64.RawStdEncoding.EncodeToString(ciphertext)
+	return base64.RawStdEncoding.EncodeToString(ciphertext), nil
 }
 
-func createFile(contents string, filename string) {
+func createFile(contents string, filename string) error {
 	file, err := os.Create(filename + ".gz")
 	if err != nil{
-		fmt.Printf("Got Error Creating file %s", err.Error())
-		panic(err)
+		return err
 	}
 	gz := gzip.NewWriter(file)
 	_, err = gz.Write([]byte(contents))
 	
 	if err != nil{
-		fmt.Printf("Got Error Writing to File %s", err.Error())
-		panic(err)
+		return err
 	}
 
 	gz.Close()
 	file.Close()
 
+	return nil
 }
 
-func PrepareFile(fileName string){
-	createFile(encryptFile(openFile(fileName)), fileName)
+func PrepareFile(fileName string) ([]byte, error){
+	content, err := openFile(fileName)
+
+	if err != nil{
+		return nil, err
+	}
+
+	encryptedContent, err := encryptFile(content)
+
+	
+	if err != nil{
+		return nil, err
+	}
+
+	return []byte(encryptedContent), nil
+
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"Github.com/Ace-h121/decrypt"
@@ -38,7 +39,19 @@ func main(){
 func sendMethod(args []string){
 
 	for _, arg := range args{
-		encrypt.PrepareFile(arg)
+		content, err := encrypt.PrepareFile(arg)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		file := transfer.MakeFileStruct(content, arg)
+		err = transfer.SendFile(file, "")
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	}
 
 }
