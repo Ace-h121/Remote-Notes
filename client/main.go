@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 
 	"Github.com/Ace-h121/decrypt"
 	"Github.com/Ace-h121/encrypt"
@@ -22,14 +24,35 @@ func main(){
 	method := os.Args[1]
 	args := os.Args[2:]
 
+	homedir, err := os.UserHomeDir()
+	if err != nil{
+		log.Fatal("Could not find home dir")
+		os.Exit(1)
+	}
+
+	config, err := os.Open(homedir + "/.config/Remote_Notes")
+	if err != nil{
+		log.Fatal("Could not find config file")
+		os.Exit(1)
+	}
+	defer config.Close()
+	
+	content, err := io.ReadAll(config)
+
+	key := string(content)
+
+	key, _, _ = strings.Cut(key, ";")
+
+
+
 	switch method {
 
 	case Send:
-		sendMethod(args)
+		sendMethod(args, key)
 		os.Exit(0)
 
 	case Receive:
-		receiveMethod(args)
+		receiveMethod(args, key)
 		os.Exit(0)
 
 	case Help:
@@ -65,10 +88,10 @@ Commands:
 
 }
 
-func sendMethod(args []string){
+func sendMethod(args []string, key string){
 
 	for _, arg := range args{
-		content, err := encrypt.PrepareFile(arg)
+		content, err := encrypt.PrepareFile(arg, key)
 
 		if err != nil {
 			panic(err)
@@ -81,13 +104,11 @@ func sendMethod(args []string){
 			panic(err)
 		}
 
-		
-
 	}
 
 }
 
-func receiveMethod(args []string){
+func receiveMethod(args []string, key string){
 	for _, arg := range args{
 		file, err := transfer.RecieveFile(arg, "http://localhost:8090/recieve")
 
@@ -96,7 +117,7 @@ func receiveMethod(args []string){
 			os.Exit(1)
 		}
 
-		file.Content, err = decrypt.DecryptFile(file.Content)
+		file.Content, err = decrypt.DecryptFile(file.Content, key)
 
 		if err != nil {
 			log.Fatal(err)

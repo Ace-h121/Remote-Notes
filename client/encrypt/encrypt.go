@@ -18,8 +18,8 @@ func openFile(file string) (string, error) {
 	return string(contents), nil
 }
 
-func encryptFile(contents string) (string, error) {
-	block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
+func encryptFile(contents string, key string) (string, error) {
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err
 	}
@@ -58,14 +58,14 @@ func createFile(contents string, filename string) error {
 	return nil
 }
 
-func PrepareFile(fileName string) ([]byte, error){
+func PrepareFile(fileName string, key string) ([]byte, error){
 	content, err := openFile(fileName)
 
 	if err != nil{
 		return nil, err
 	}
 
-	encryptedContent, err := encryptFile(content)
+	encryptedContent, err := encryptFile(content, key)
 
 	
 	if err != nil{

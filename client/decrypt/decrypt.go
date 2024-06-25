@@ -8,13 +8,13 @@ import (
 
 
 
-func DecryptFile(content []byte) ([]byte, error) {
+func DecryptFile(content []byte, key string) ([]byte, error) {
 	ciphertext, err := base64.RawStdEncoding.DecodeString(string(content))
 	if err != nil {
 		return nil, err
 	}
 
-	block, err := aes.NewCipher([]byte("UcEqnUpzNoqYpb1O5kpormNFcpd7CNG0"))
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {	
 		return nil, err
 	}
