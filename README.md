@@ -20,7 +20,7 @@ You heard me sing the praises of how easy it is to setup, now let me show you.
 
 for the client, it is simply just one command, all you need to know is the ipaddr/domain for your server. It should look something like this
 
-`bash
+`
 $ ClientStartup http://ipaddr:Port
 `
 
@@ -32,13 +32,13 @@ For the server, its a tad bit more complex, but not really. All you need to do i
 
 You may create the dir by typing 
 
-`bash
+`
 $ mkdir /Path/To/Dir
 `
 
 After that, simply use the startup script and pass in the directory
 
-`bash
+`
 $ ServerStartup /Path/To/Dir
 `
 
@@ -64,11 +64,11 @@ Uploads the given files, it can also take multiple arugments
 you can also type help to display the message
 
 #### Examples 
-`bash
+`
 $ Remote_Notes help
 `
 
-`bash
+`
 $ Remote_Notes list
 `
 
