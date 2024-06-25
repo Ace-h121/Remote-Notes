@@ -26,7 +26,11 @@ type Path struct {
 	var notespath string 
 
 func main(){
-	config, err := os.ReadFile("config.txt")
+	homedir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("Could not find Home Dir")
+	}
+	config, err := os.ReadFile(homedir + "/.config/Remote_Notes_Server")
 	if err != nil{
 		fmt.Print("Could not find/understand config file")
 		log.Fatal(err)
@@ -36,7 +40,6 @@ func main(){
 	notespath = strings.Trim(notespath, "\n")
 	fmt.Printf("default notes directory: %s \n" , notespath)
 
-	os.MkdirAll(notespath, 0600)
 
 	if err != nil{
 		log.Fatal(err)
