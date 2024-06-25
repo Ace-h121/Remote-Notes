@@ -41,18 +41,18 @@ func main(){
 
 	key := string(content)
 
-	key, _, _ = strings.Cut(key, ";")
+	key, ipaddr, _ := strings.Cut(key, ";")
 
 
 
 	switch method {
 
 	case Send:
-		sendMethod(args, key)
+		sendMethod(args, key, ipaddr)
 		os.Exit(0)
 
 	case Receive:
-		receiveMethod(args, key)
+		receiveMethod(args, key, ipaddr)
 		os.Exit(0)
 
 	case Help:
@@ -78,7 +78,7 @@ Commands:
 			path = args[0]
 		}
 		
-		fmt.Println(listingMethod(path))
+		fmt.Println(listingMethod(path, ipaddr))
 		os.Exit(0)
 
 	default:
@@ -88,7 +88,7 @@ Commands:
 
 }
 
-func sendMethod(args []string, key string){
+func sendMethod(args []string, key string, ipaddr string){
 
 	for _, arg := range args{
 		content, err := encrypt.PrepareFile(arg, key)
@@ -98,8 +98,7 @@ func sendMethod(args []string, key string){
 		}
 
 		file := transfer.MakeFileStruct(content, arg)
-		err = transfer.SendFile(file, "http://localhost:8090/send")
-
+		err = transfer.SendFile(file, ipaddr + "/send")
 		if err != nil {
 			panic(err)
 		}
@@ -108,9 +107,9 @@ func sendMethod(args []string, key string){
 
 }
 
-func receiveMethod(args []string, key string){
+func receiveMethod(args []string, key string, ipaddr string){
 	for _, arg := range args{
-		file, err := transfer.RecieveFile(arg, "http://localhost:8090/recieve")
+		file, err := transfer.RecieveFile(arg, ipaddr + "/recieve")
 
 		if err != nil {
 			log.Fatal(err)
@@ -131,8 +130,8 @@ func receiveMethod(args []string, key string){
 
 }
 
-func listingMethod(arg string) string {
-	list, err := transfer.ListFiles(arg, "http://localhost:8090/list")
+func listingMethod(arg string, ipaddr string) string {
+	list, err := transfer.ListFiles(arg, ipaddr +"/list")
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
