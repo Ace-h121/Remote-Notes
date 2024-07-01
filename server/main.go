@@ -49,7 +49,7 @@ func main(){
 	router.HandleFunc("POST /send", handleRecieve)
 	router.HandleFunc("GET /recieve", handleSend)
 	router.HandleFunc("GET /list", handleList)
-	http.ListenAndServe("localhost:8090", router)
+	http.ListenAndServe(":8090", router)
 }
 
 func handleRecieve(w http.ResponseWriter, r *http.Request){
