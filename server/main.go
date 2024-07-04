@@ -46,10 +46,10 @@ func main(){
 	} 
 
 	router := http.NewServeMux()
-	router.HandleFunc("POST /send", handleRecieve)
-	router.HandleFunc("GET /recieve", handleSend)
-	router.HandleFunc("GET /list", handleList)
-	http.ListenAndServe(":8090", router)
+	router.HandleFunc("/send", handleRecieve)
+	router.HandleFunc("/recieve", handleSend)
+	router.HandleFunc("/list", handleList)
+	http.ListenAndServe(":8080", router)
 }
 
 func handleRecieve(w http.ResponseWriter, r *http.Request){
@@ -121,16 +121,16 @@ func handleList(w http.ResponseWriter, r *http.Request){
 	
 	var resp string
 
-	ansiTeal := "\033[36m"
+	ansiTeal := "\033[36"
 
 	ansiReset := "\033[0m"
 
 	for _, file := range dir{
 
 		if file.IsDir(){
-		resp = resp + ansiTeal + file.Name() + ansiReset
+		resp = resp + ansiTeal + file.Name() + ansiReset " "
 		} else {
-		 resp = resp+ file.Name()
+		 resp = resp+ file.Name() " "
 		}
 	}
 
