@@ -121,8 +121,17 @@ func handleList(w http.ResponseWriter, r *http.Request){
 	
 	var resp string
 
+	ansiTeal := "\033[36m"
+
+	ansiReset := "\033[0m"
+
 	for _, file := range dir{
+
+		if file.IsDir(){
+		resp = resp + ansiTeal + file.Name() + ansiReset
+		} else {
 		 resp = resp+ file.Name()
+		}
 	}
 
 	w.Write([]byte(resp))
