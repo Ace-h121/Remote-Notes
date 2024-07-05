@@ -18,10 +18,14 @@ const(
 	Receive = "download"
 	Help = "help"
 	List = "list"
+	Preview = "preview"
 )
 
 func main(){
+	//figure out what the user wants to do
 	method := os.Args[1]
+
+	//grab the file args
 	args := os.Args[2:]
 
 	homedir, err := os.UserHomeDir()
@@ -30,6 +34,7 @@ func main(){
 		os.Exit(1)
 	}
 
+	//grab the config
 	config, err := os.Open(homedir + "/.config/Remote_Notes")
 	if err != nil{
 		log.Fatal("Could not find config file")
@@ -37,15 +42,17 @@ func main(){
 	}
 	defer config.Close()
 	
+	//read the config
 	content, err := io.ReadAll(config)
 
+	//parse it for important stuff
 	key := string(content)
 
 	key, ipaddr, _ := strings.Cut(key, ";")
 	ipaddr = strings.Trim(ipaddr, "\n")
 
 
-
+	//actually do stuff
 	switch method {
 
 	case Send:
@@ -61,12 +68,14 @@ func main(){
 	upload [file1 file2 ...]   : Encrypt and upload specified files
 	download [file1 file2 ...] : Download and decrypt specified files
 	list [path (optional)]	   : List all files in the dir, if no given dir lists root
+	preview [file1 file2 ...]  : Previews the given file
 	help                       : Display this help message
 
 Commands:
 	upload       Uploads and encrypts the specified files to the server.
 	download     Downloads and decrypts the specified files from the server.
 	list		 Lists the given directory
+	preview		 Previews files
 	help         Displays this help message.
 		`)
 		os.Exit(0)
@@ -80,6 +89,10 @@ Commands:
 		}
 		
 		fmt.Println(listingMethod(path, ipaddr))
+		os.Exit(0)
+
+	case Preview:
+		previewMethod(args, key, ipaddr)
 		os.Exit(0)
 
 	default:
@@ -129,6 +142,26 @@ func receiveMethod(args []string, key string, ipaddr string){
 		transfer.CreateFile(file.Name, file.Content)
 	}
 
+}
+
+func previewMethod(args []string, key string, ipaddr string){
+	for _, arg := range args{
+		file, err := transfer.RecieveFile(arg, ipaddr + "/recieve")
+
+		if err !=nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		file.Content, err = decrypt.DecryptFile(file.Content, key)
+
+		if err !=nil{
+			log.Fatal(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("File name: %s \nFile Content: %s", file.Name, file.Content)
+	}
 }
 
 func listingMethod(arg string, ipaddr string) string {
