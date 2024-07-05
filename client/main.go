@@ -42,6 +42,7 @@ func main(){
 	key := string(content)
 
 	key, ipaddr, _ := strings.Cut(key, ";")
+	ipaddr = strings.Trim(ipaddr, "\n")
 
 
 
