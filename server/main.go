@@ -36,18 +36,17 @@ func main() {
 	//look for config
 	config, err := os.ReadFile(homedir + "/.config/Remote_Notes_Server")
 	if err != nil {
-		fmt.Print("Could not find/understand config file")
-		log.Fatal(err)
+		fmt.Print("Could not find/understand config file\n")
+		notespath = "/app/notes/"
+		err = nil
+	} else {
+		notespath = string(config)
+		notespath = strings.Trim(notespath, "\n")
 	}
 
 	//parse the config
-	notespath = string(config)
-	notespath = strings.Trim(notespath, "\n")
-	fmt.Printf("default notes directory: %s \n", notespath)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Printf("default notes directory: %s \n", notespath)
 
 	router := http.NewServeMux()
 	router.HandleFunc("/send", handleRecieve)
@@ -100,6 +99,8 @@ func handleSend(w http.ResponseWriter, r *http.Request) {
 		Content: content,
 		Name:    filename,
 	})
+
+	log.Println(filename)
 
 	if err != nil {
 		log.Print(err)

@@ -7,21 +7,19 @@ import (
 	"path/filepath"
 )
 
-func WriteFile(notespath string, filename string, contents []byte) (error) {
-	fmt.Printf("Writing file, %s, to %s \n" ,filename +".gz",notespath )
+func WriteFile(notespath string, filename string, contents []byte) error {
+	fmt.Printf("Writing file, %s, to %s \n", filename+".gz", notespath)
 	os.MkdirAll(filepath.Dir(notespath+filename), 0700)
-	fmt.Println(filepath.Dir(notespath+filename))
+	fmt.Println(filepath.Dir(notespath + filename))
 
-
-	
 	file, err := os.Create(notespath + filename + ".gz")
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	gz := gzip.NewWriter(file)
 	_, err = gz.Write([]byte(contents))
-	
-	if err != nil{
+
+	if err != nil {
 		return err
 	}
 
@@ -30,4 +28,3 @@ func WriteFile(notespath string, filename string, contents []byte) (error) {
 
 	return nil
 }
-
