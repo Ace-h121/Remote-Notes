@@ -56,7 +56,7 @@ func main() {
 }
 
 func handleRecieve(w http.ResponseWriter, r *http.Request) {
-
+	w.WriteHeader(http.StatusAccepted)
 	decoder := json.NewDecoder(r.Body)
 
 	var file File
@@ -73,9 +73,11 @@ func handleRecieve(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 		}
 	}()
+
 }
 
 func handleSend(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusAccepted)
 	decoder := json.NewDecoder(r.Body)
 
 	var path Path
@@ -111,6 +113,7 @@ func handleSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleList(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusAccepted)
 	req, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Print(err)
