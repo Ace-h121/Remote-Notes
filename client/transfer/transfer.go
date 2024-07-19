@@ -18,7 +18,7 @@ func CleanFile(filename string){
 
 
 type File struct {
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	Name string `json:"name"`
 }
 
@@ -26,7 +26,7 @@ type Path struct {
 	Path string `json:"path"`
 }
 
-func MakeFileStruct(content []byte, name string) File{
+func MakeFileStruct(content string, name string) File{
 	return File {
 		Content: content,
 		Name: name,
@@ -53,6 +53,7 @@ func SendFile(file File, url string) error{
 	}
 	defer resp.Body.Close()
 	
+
 	return nil
 }
 
@@ -89,6 +90,7 @@ func RecieveFile(path string, url string) (File, error){
 
 	err = json.Unmarshal(body, &newFile)
 
+
 	if err != nil {
 		log.Fatal("Requested file does not exist")
 	}
@@ -96,13 +98,13 @@ func RecieveFile(path string, url string) (File, error){
 	return newFile, nil 
 }
 
-func CreateFile(filename string, content []byte) error {
+func CreateFile(filename string, content string) error {
 	file, err := os.Create(filename)
 	defer file.Close()
 	if err != nil {
 		return err
 	}
-	file.Write(content)
+	file.Write([]byte(content))
 	return nil
 }
 

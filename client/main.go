@@ -107,6 +107,7 @@ func sendMethod(args []string, key string, ipaddr string){
 	for _, arg := range args{
 		content, err := encrypt.PrepareFile(arg, key)
 
+
 		if err != nil {
 			panic(err)
 		}
@@ -126,14 +127,14 @@ func receiveMethod(args []string, key string, ipaddr string){
 		file, err := transfer.RecieveFile(arg, ipaddr + "/recieve")
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error())
 			os.Exit(1)
 		}
 
 		file.Content, err = decrypt.DecryptFile(file.Content, key)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error() + "136")
 			os.Exit(1)
 		}
 

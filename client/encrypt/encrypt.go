@@ -1,13 +1,13 @@
 package encrypt
 
 import (
-	"os"
-	"io"
+	"compress/gzip"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"compress/gzip"
 	"encoding/base64"
+	"io"
+	"os"
 )
 
 func openFile(file string) (string, error) {
@@ -34,6 +34,7 @@ func encryptFile(contents string, key string) (string, error) {
 		return "", err
 	}
 
+
 	stream := cipher.NewCFBEncrypter(block, iv)
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], plainText)
 
@@ -58,20 +59,20 @@ func createFile(contents string, filename string) error {
 	return nil
 }
 
-func PrepareFile(fileName string, key string) ([]byte, error){
+func PrepareFile(fileName string, key string) (string, error){
 	content, err := openFile(fileName)
 
 	if err != nil{
-		return nil, err
+		return "", err
 	}
 
 	encryptedContent, err := encryptFile(content, key)
 
 	
 	if err != nil{
-		return nil, err
+		return "", err
 	}
 
-	return []byte(encryptedContent), nil
+	return encryptedContent, nil
 
 }

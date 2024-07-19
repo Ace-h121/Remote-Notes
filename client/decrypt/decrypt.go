@@ -8,21 +8,21 @@ import (
 
 
 
-func DecryptFile(content []byte, key string) ([]byte, error) {
-	ciphertext, err := base64.RawStdEncoding.DecodeString(string(content))
+func DecryptFile(content string, key string) (string, error) {
+	ciphertext, err := base64.RawStdEncoding.DecodeString(content)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {	
-		return nil, err
+		return "", err
 	}
 
 	// The IV needs to be unique, but not secure. Therefore it's common to
 	// include it at the beginning of the ciphertext.
 	if len(ciphertext) < aes.BlockSize {
-		return nil, err
+		return "", err
 	}
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
@@ -32,7 +32,7 @@ func DecryptFile(content []byte, key string) ([]byte, error) {
 	// XORKeyStream can work in-place if the two arguments are the same.
 	stream.XORKeyStream(ciphertext, ciphertext)
 
-	return ciphertext, err
+	return string(ciphertext), err
 }
 
 
