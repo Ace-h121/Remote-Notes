@@ -24,7 +24,11 @@ func SendFile(notespath string, path string) ([]byte, error) {
     buffer := new(bytes.Buffer)
 
     for scanner.Scan(){
-	buffer.Write([]byte(scanner.Text()))
+	_, err := buffer.Write([]byte(scanner.Text()))
+	if err != nil {
+		return nil, err
+	}
+	
     }
 
     return buffer.Bytes(), nil 

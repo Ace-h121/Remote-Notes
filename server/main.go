@@ -16,7 +16,7 @@ import (
 
 //struct for sending files
 type File struct {
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	Name    string `json:"name"`
 }
 
@@ -67,12 +67,11 @@ func handleRecieve(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	log.Printf("Reciving file %s from %s", file.Name, r.RemoteAddr)
-	go func() {
-		err = recievefile.WriteFile(notespath, file.Name, file.Content)
+
+		err = recievefile.WriteFile(notespath, file.Name, string(file.Content))
 		if err != nil {
 			log.Print(err)
 		}
-	}()
 
 }
 
@@ -95,14 +94,14 @@ func handleSend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filename := filepath.Base(path.Path)
-	filename = strings.Trim(filename, ".gz")
+	filename = strings.TrimSuffix(filename, ".gz")
 
 	data, err := json.Marshal(File{
-		Content: content,
+		Content: string(content),
 		Name:    filename,
 	})
 
-	log.Println(filename)
+
 
 	if err != nil {
 		log.Print(err)
