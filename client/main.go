@@ -22,10 +22,6 @@ const(
 )
 
 func main(){
-	if len(os.Args) <= 1{
-		fmt.Println("Not enough args")
-		os.Exit(1)
-	}
 	//figure out what the user wants to do
 	method := os.Args[1]
 
